@@ -4,7 +4,7 @@
 
 class QWebRTCMediaTrack;
 class QWebRTCQuickVideoItem_p;
-class QWebRTCQuickVideoItem: public QQuickPaintedItem {
+class QWebRTCQuickVideoItem: public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QObject* videoTrack READ videoTrack WRITE setVideoTrack NOTIFY videoTrackChanged)
     Q_PROPERTY(QSize sourceSize READ sourceSize NOTIFY sourceSizeChanged)
@@ -15,7 +15,8 @@ public:
     QObject* videoTrack();
     void setVideoTrack(QObject*);
 
-    virtual void paint(QPainter *painter) override;
+    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
+    //virtual void paint(QPainter *painter) override;
 
     QSize sourceSize();
 
