@@ -44,12 +44,12 @@ if(ENABLE_UBSAN)
 endif()
 
 include_directories(
-    "${CMAKE_CURRENT_SOURCE_DIR}/../webrtc_checkout/src/"
+    "${CMAKE_CURRENT_BINARY_DIR}/webrtc/src/"
 )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_path(WebRTCOutDir webrtc
-    HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../webrtc_checkout/src/out/Release/obj"
+    HINTS "${CMAKE_CURRENT_BINARY_DIR}/webrtc/src/out/Default/obj"
     PATH_SUFFIXES webrtc)
 
 find_package(Qt5 COMPONENTS Core Widgets Quick)
@@ -167,6 +167,7 @@ file(GLOB_RECURSE VPX
     "${WebRTCOutDir}/modules/video_capture/video_capture_internal_impl/video_capture.o"
     "${WebRTCOutDir}/modules/video_capture/video_capture_internal_impl/rtc_video_capture_objc.o"
     "${WebRTCOutDir}/modules/video_capture/video_capture_internal_impl/device_info_objc.o"
+    "${WebRTCOutDir}/../third_party/openh264/*.o"
     #"${WebRTCOutDir}/sdk/webrtc_h264_video_toolbox/h264_video_toolbox_decoder.o"
     #"${WebRTCOutDir}/sdk/webrtc_h264_video_toolbox/h264_video_toolbox_encoder.o"
     #"${WebRTCOutDir}/sdk/webrtc_h264_video_toolbox/h264_video_toolbox_nalu.o"
@@ -211,6 +212,8 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/../third_party/opus/libopus.a"
     "${WebRTCOutDir}/../third_party/libvpx/libvpx.a"
     "${WebRTCOutDir}/../third_party/protobuf/libprotobuf_full.a"
+    "${WebRTCOutDir}/../third_party/ffmpeg/libffmpeg_internal.a"
+    "${WebRTCOutDir}/../third_party/ffmpeg/libffmpeg_yasm.a"
     "${BORING_SSL_OBJ}"
     "${VPX}"
     "${WebRTCOutDir}/p2p/librtc_p2p.a"
