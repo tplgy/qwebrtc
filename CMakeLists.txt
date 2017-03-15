@@ -141,16 +141,6 @@ file(GLOB_RECURSE WEBRTC_OBJ
     "${WebRTCOutDir}/../third_party/openh264/*.o"
 )
 
-find_library(FoundationLibs Foundation)
-find_library(CoreAudioLibs CoreAudio)
-find_library(AudioToolboxLibs AudioToolbox)
-find_library(CoreGraphicsLibs CoreGraphics)
-find_library(CoreVideoLibs CoreVideo)
-find_library(CoreMediaLibs CoreMedia)
-find_library(AVFoundationLibs AVFoundation)
-find_library(OpenGlLibs OpenGl)
-find_library(CocoaLibs Cocoa)
-
 target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/libwebrtc.a"
     "${WebRTCOutDir}/libwebrtc_common.a"
@@ -171,7 +161,6 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/../third_party/usrsctp/libusrsctp.a"
     "${WebRTCOutDir}/../third_party/libsrtp/libsrtp.a"
     "${WebRTCOutDir}/../third_party/libyuv/libyuv.a"
-    "${WebRTCOutDir}/../third_party/expat/libexpat.a"
     "${WebRTCOutDir}/../third_party/opus/libopus.a"
     "${WebRTCOutDir}/../third_party/protobuf/libprotobuf_full.a"
     "${WebRTCOutDir}/../third_party/ffmpeg/libffmpeg_yasm.a"
@@ -209,13 +198,31 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/modules/video_capture/libvideo_capture_internal_impl.a"
     Qt5::Core
     Qt5::Quick
-    ${FoundationLibs}
-    ${CoreAudioLibs}
-    ${AudioToolboxLibs}
-    ${CoreGraphicsLibs}
-    ${CoreVideoLibs}
-    ${CoreMediaLibs}
-    ${CocoaLibs}
-    ${AVFoundationLibs}
-    ${OpenGlLibs}
 )
+
+
+if(APPLE)
+    find_library(FoundationLibs Foundation)
+    find_library(CoreAudioLibs CoreAudio)
+    find_library(AudioToolboxLibs AudioToolbox)
+    find_library(CoreGraphicsLibs CoreGraphics)
+    find_library(CoreVideoLibs CoreVideo)
+    find_library(CoreMediaLibs CoreMedia)
+    find_library(VideoToolboxLibs VideoToolbox)
+    find_library(AVFoundationLibs AVFoundation)
+    find_library(OpenGlLibs OpenGl)
+    find_library(CocoaLibs Cocoa)
+
+    target_link_libraries(${PROJECT_NAME}
+        ${FoundationLibs}
+        ${CoreAudioLibs}
+        ${AudioToolboxLibs}
+        ${CoreGraphicsLibs}
+        ${CoreVideoLibs}
+        ${CoreMediaLibs}
+        ${CocoaLibs}
+       "${WebRTCOutDir}/../third_party/expat/libexpat.a"
+        ${AVFoundationLibs}
+        ${OpenGlLibs}
+    )
+endif()    

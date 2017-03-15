@@ -1,6 +1,6 @@
 #include "qwebrtcutilities.hpp"
 #include "qwebrtctypes_p.hpp"
-#include "QWebRTCPeerConnection.hpp"
+#include "qwebrtcpeerconnection.hpp"
 #include <QJsonObject>
 #include <QDebug>
 

@@ -1,4 +1,5 @@
-#include <QWebRTCPeerConnectionFactory.hpp>
+#include <memory>
+#include <qwebrtcpeerconnectionfactory.hpp>
 #include <webrtc/api/peerconnectioninterface.h>
 #include "qwebrtcpeerconnection_p.hpp"
 #include "qwebrtcpeerconnection.hpp"

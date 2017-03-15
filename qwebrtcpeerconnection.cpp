@@ -1,4 +1,5 @@
-#include <QWebRTCPeerConnection.hpp>
+#include <memory>
+#include <qwebrtcpeerconnection.hpp>
 #include <qwebrtcpeerconnection_p.hpp>
 #include "qwebrtcmediastream_p.hpp"
 #include "qwebrtcdatachannel_p.hpp"

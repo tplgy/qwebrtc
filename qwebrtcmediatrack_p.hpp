@@ -12,7 +12,7 @@ public:
     ~QWebRTCMediaTrack_impl();
     virtual Type trackType() override;
 
-    void addVideoSink(rtc::VideoSinkInterface<webrtc::VideoFrame>);
+    //void addVideoSink(const rtc::VideoSinkInterface<webrtc::VideoFrame>&);
 
     virtual bool screenCast() override;
 

@@ -6,7 +6,7 @@
 #include <QList>
 #include <QVariantMap>
 #include "qwebrtcsessiondescription.hpp"
-#include "QWebRTCPeerConnection.hpp"
+#include "qwebrtcpeerconnection.hpp"
 #include "qwebrtctypes_p.hpp"
 #include <QDebug>
 
