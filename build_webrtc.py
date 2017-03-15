@@ -9,7 +9,7 @@ from multiprocessing import cpu_count
 from distutils import spawn
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-o", "--out_dir", help="WebRTC build directory", action="store_true")
+#parser.add_argument("-o", "--out_dir", help="WebRTC build directory", action="store_true")
 parser.add_argument("-c", "--clean", help="Clean WebRTC build", action="store_true")
 parser.add_argument("-r", "--release", help="Build in release mode", action="store_true")
 args = parser.parse_args()

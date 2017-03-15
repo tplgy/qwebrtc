@@ -45,4 +45,4 @@ r = subprocess.call(build_args)
 if r != 0:
     exit(r)
 
-exit(subprocess.call("ninja -j" + str(args.jobs), shell=True))
+exit(subprocess.call("ninja install -j" + str(args.jobs), shell=True))
