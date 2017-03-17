@@ -94,12 +94,16 @@ std::shared_ptr<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createVideoTrac
     }
 
     cricket::WebRtcVideoDeviceCapturerFactory factory;
-    cricket::VideoCapturer* capturer;
+    cricket::VideoCapturer* capturer = nullptr;
     for (const auto& name : device_names) {
         capturer = factory.Create(cricket::Device(name, 0));
         if (capturer) {
             break;
         }
+    }
+    if (!capturer) {
+        qWarning() << "Could not find a camera device";
+        return nullptr;
     }
 
     auto videoSource = m_impl->native_interface->CreateVideoSource(capturer);
