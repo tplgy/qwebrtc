@@ -4,6 +4,7 @@ project(QWebRTC C CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_AUTOMOC ON)
 add_definitions(-DWEBRTC_POSIX)
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 option(ENABLE_ASAN "ASAN build" OFF)
 option(ENABLE_TSAN "TSAN build" OFF)
@@ -12,8 +13,12 @@ option(ENABLE_UBSAN "UBSAN build" OFF)
 set(CMAKE_CXX_FLAGS "-Wall -Werror -Wno-deprecated-declarations -Wno-error=unused-variable ${CMAKE_CXX_FLAGS}")
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FLAGS}")
+    set(START_GROUP )
+    set(END_GROUP )
 endif()
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set(START_GROUP -Wl,--start-group)
+    set(END_GROUP -Wl,--end-group)
     set(CMAKE_CXX_FLAGS "-fdiagnostics-color=always -Wno-error=maybe-uninitialized -Wno-error=unused-local-typedefs ${CMAKE_CXX_FLAGS}")
 endif()
 
@@ -116,7 +121,6 @@ file(GLOB_RECURSE WEBRTC_OBJ
     "${WebRTCOutDir}/../third_party/libvpx/*.o"
     "${WebRTCOutDir}/../third_party/libjpeg_turbo/*.o"
     "${WebRTCOutDir}/../third_party/openmax_dl/dl/dl/*.o"
-    "${WebRTCOutDir}/../third_party/ffmpeg/ffmpeg_internal/*.o"
     "${WebRTCOutDir}/api/video_frame_api/i420_buffer.o"
     "${WebRTCOutDir}/api/video_frame_api/video_frame.o"
     "${WebRTCOutDir}/api/audio_codecs/audio_codecs_api/audio_decoder.o"
@@ -142,6 +146,7 @@ file(GLOB_RECURSE WEBRTC_OBJ
 )
 
 target_link_libraries(${PROJECT_NAME}
+    ${START_GROUP}
     "${WebRTCOutDir}/libwebrtc.a"
     "${WebRTCOutDir}/libwebrtc_common.a"
     "${WebRTCOutDir}/pc/librtc_pc.a"
@@ -193,15 +198,19 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/voice_engine/libaudio_coder.a"
     "${WebRTCOutDir}/logging/librtc_event_log_impl.a"
     "${WebRTCOutDir}/stats/librtc_stats.a"
+    "${WebRTCOutDir}/modules/video_capture/libvideo_capture_internal_impl.a"
     "${WebRTCOutDir}/modules/video_capture/libvideo_capture_module.a"
     "${WebRTCOutDir}/modules/video_capture/libvideo_capture.a"
-    "${WebRTCOutDir}/modules/video_capture/libvideo_capture_internal_impl.a"
+    ${END_GROUP}
     Qt5::Core
     Qt5::Quick
 )
 
 
 if(APPLE)
+    file(GLOB_RECURSE FFMPEG_OBJ
+        "${WebRTCOutDir}/../third_party/ffmpeg/ffmpeg_internal/*.o"
+    )
     find_library(FoundationLibs Foundation)
     find_library(CoreAudioLibs CoreAudio)
     find_library(AudioToolboxLibs AudioToolbox)
@@ -214,6 +223,7 @@ if(APPLE)
     find_library(CocoaLibs Cocoa)
 
     target_link_libraries(${PROJECT_NAME}
+        ${FFMPEG_OBJ}
         ${FoundationLibs}
         ${CoreAudioLibs}
         ${AudioToolboxLibs}
@@ -224,5 +234,11 @@ if(APPLE)
        "${WebRTCOutDir}/../third_party/expat/libexpat.a"
         ${AVFoundationLibs}
         ${OpenGlLibs}
+    )
+else() #LINUX
+    target_link_libraries(${PROJECT_NAME}
+        Xcomposite
+        "${WebRTCOutDir}/../../libffmpeg.so"
+        "${WebRTCOutDir}/../base/third_party/libevent/libevent.a"
     )
 endif()    

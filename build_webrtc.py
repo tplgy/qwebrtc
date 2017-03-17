@@ -48,7 +48,7 @@ is_debug = "true"
 if args.release:
     is_debug = "false"
 
-r = subprocess.call("gn gen out/Default --args='rtc_include_tests=false proprietary_codecs=true is_debug="+is_debug+" libyuv_include_tests=false rtc_use_h264=true use_external_popup_menu=false rtc_use_gtk=false'", shell=True)
+r = subprocess.call("gn gen out/Default --args='rtc_include_tests=false is_component_ffmpeg=true proprietary_codecs=true is_debug="+is_debug+" libyuv_include_tests=false rtc_use_h264=true use_external_popup_menu=false rtc_use_gtk=false'", shell=True)
 if r != 0:
     exit(r)
 exit(subprocess.call("ninja -C out/Default", shell=True))
