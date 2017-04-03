@@ -12,6 +12,8 @@ public:
     virtual void removeTrack(const std::shared_ptr<QWebRTCMediaTrack>&) override;
     virtual QList<std::shared_ptr<QWebRTCMediaTrack>> tracks() override;
 
+    virtual QString label() override;
+
     QList<std::shared_ptr<QWebRTCMediaTrack>> m_tracks;
     rtc::scoped_refptr<webrtc::MediaStreamInterface> m_nativeStream;
 };

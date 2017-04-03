@@ -1,12 +1,14 @@
 #include <memory>
-#include <qwebrtcpeerconnection.hpp>
-#include <qwebrtcpeerconnection_p.hpp>
+#include "qwebrtcpeerconnection.hpp"
+#include "qwebrtcpeerconnection_p.hpp"
 #include "qwebrtcmediastream_p.hpp"
 #include "qwebrtcdatachannel_p.hpp"
 #include "qwebrtctypes_p.hpp"
 #include "qwebrtcicecandidate.hpp"
 #include <webrtc/api/peerconnectioninterface.h>
+#include <webrtc/api/datachannelinterface.h>
 #include <webrtc/api/mediaconstraintsinterface.h>
+#include <webrtc/api/jsepicecandidate.h>
 #include <QVariantMap>
 #include <QDebug>
 #include <assert.h>
@@ -216,8 +218,9 @@ void QWebRTCPeerConnection::removeIceCandidate(const std::shared_ptr<QWebRTCIceC
     }
 }
 
-std::shared_ptr<QWebRTCDataChannel> QWebRTCPeerConnection::dataChannelForLabel(const QString& label)
+std::shared_ptr<QWebRTCDataChannel> QWebRTCPeerConnection::dataChannelForLabel(const QString& label, const QWebRTCDataChannelConfig& config)
 {
+    const webrtc::DataChannelInit nativeInit;
     return std::make_shared<QWebRTCDataChannel_impl>(m_impl->_conn->CreateDataChannel(label.toStdString(), 0));
 }
 
@@ -277,10 +280,6 @@ void QWebRTCPeerConnection_impl::OnSignalingChange(webrtc::PeerConnectionInterfa
 }
 
 void QWebRTCPeerConnection_impl::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {
-    webrtc::VideoTrackVector videoTracks = stream->GetVideoTracks();
-    for (auto videoTrack : videoTracks) {
-        qDebug() << "Video  track " << QString::fromStdString(videoTrack->id());
-    }
     auto qStream = std::make_shared<QWebRTCMediaStream_impl>(stream);
     Q_EMIT q_ptr->streamAdded(qStream);
     qDebug() << "Stream added " << QString::fromStdString(stream->label());
@@ -288,21 +287,25 @@ void QWebRTCPeerConnection_impl::OnAddStream(rtc::scoped_refptr<webrtc::MediaStr
 
 void QWebRTCPeerConnection_impl::OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream)
 {
-    qDebug() << "stream removed";
+    auto qStream = std::make_shared<QWebRTCMediaStream_impl>(stream);
+    Q_EMIT q_ptr->streamRemoved(qStream);
 }
 
 void QWebRTCPeerConnection_impl::OnRemoveStream(webrtc::MediaStreamInterface* stream)
 {
+    assert(false);
     qDebug() << "stream removed";
 }
 
 void QWebRTCPeerConnection_impl::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel)
 {
     qDebug() << "New data channel";
+    Q_EMIT q_ptr->dataChannelReceived(std::make_shared<QWebRTCDataChannel_impl>(data_channel));
 }
 
 void QWebRTCPeerConnection_impl::OnDataChannel(webrtc::DataChannelInterface* data_channel)
 {
+    assert(false);
     qDebug() << "New data channel";
 }
 
@@ -328,6 +331,12 @@ void QWebRTCPeerConnection_impl::OnIceCandidate(const webrtc::IceCandidateInterf
 
 void QWebRTCPeerConnection_impl::OnIceCandidatesRemoved(const std::vector<cricket::Candidate>& candidates)
 {
+    std::vector<std::shared_ptr<QWebRTCIceCandidate_impl>> can;
+    for (auto candidate : candidates) {
+        std::unique_ptr<webrtc::JsepIceCandidate> candidate_wrapper(
+            new webrtc::JsepIceCandidate(candidate.transport_name(), -1, candidate));
+        can.push_back(std::make_shared<QWebRTCIceCandidate_impl>(candidate_wrapper.get()));
+    }
     qDebug() << "Ice candidate removed";
 }
 

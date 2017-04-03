@@ -38,3 +38,8 @@ QList<std::shared_ptr<QWebRTCMediaTrack>> QWebRTCMediaStream_impl::tracks()
 {
     return m_tracks;
 }
+
+QString QWebRTCMediaStream_impl::label()
+{
+    return QString::fromStdString(m_nativeStream->label());
+}

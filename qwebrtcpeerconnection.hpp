@@ -6,6 +6,7 @@
 class QWebRTCPeerConnection_impl;
 
 class QWebRTCDataChannel;
+struct QWebRTCDataChannelConfig;
 class QWebRTCIceCandidate;
 class QWebRTCSessionDescription;
 
@@ -40,7 +41,7 @@ public:
     void addIceCandidate(const std::shared_ptr<QWebRTCIceCandidate>&);
     void removeIceCandidate(const std::shared_ptr<QWebRTCIceCandidate>&);
 
-    std::shared_ptr<QWebRTCDataChannel> dataChannelForLabel(const QString& label);
+    std::shared_ptr<QWebRTCDataChannel> dataChannelForLabel(const QString& label, const QWebRTCDataChannelConfig& config);
 
     static std::shared_ptr<QWebRTCSessionDescription> createSessionDescription(QWebRTCSessionDescription::SDPType, const QByteArray&);
     static std::shared_ptr<QWebRTCIceCandidate> createIceCandidate(QByteArray mId, int sdpMLineIndex, const QByteArray& sdpData);
@@ -57,6 +58,7 @@ Q_SIGNALS:
     void newIceCandidate(const std::shared_ptr<QWebRTCIceCandidate>&);
     void iceCandidateRemoved(std::shared_ptr<QWebRTCIceCandidate>);
     void renegotiationNeeded();
+    void dataChannelReceived(const std::shared_ptr<QWebRTCDataChannel>&);
 
 private:
     QWebRTCPeerConnection();

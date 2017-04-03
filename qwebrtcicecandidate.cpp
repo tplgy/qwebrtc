@@ -2,6 +2,7 @@
 #include "qwebrtctypes_p.hpp"
 #include <QDebug>
 #include <assert.h>
+#include <webrtc/api/jsepicecandidate.h>
 
 QByteArray QWebRTCIceCandidate_impl::sdp() const
 {
@@ -45,4 +46,10 @@ QWebRTCIceCandidate_impl::QWebRTCIceCandidate_impl(const webrtc::IceCandidateInt
             m_sdpMlineIndex = candidate->sdp_mline_index();
         }
     }
+}
+
+QWebRTCIceCandidate_impl::QWebRTCIceCandidate_impl(const webrtc::JsepIceCandidate* candidate)
+{
+    m_sdpMlineIndex = candidate->sdp_mline_index();
+    m_sdpMid = QByteArray::fromStdString(candidate->sdp_mid());
 }

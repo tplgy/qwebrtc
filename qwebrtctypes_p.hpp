@@ -25,10 +25,15 @@ private:
     webrtc::SessionDescriptionInterface* m_sessionDescription;
 };
 
+namespace webrtc {
+class JsepIceCandidate;
+}
+
 class QWebRTCIceCandidate_impl : public QWebRTCIceCandidate {
 public:
     QWebRTCIceCandidate_impl(QByteArray sdpMid, int sdpIndex, const QByteArray& sdp);
     explicit QWebRTCIceCandidate_impl(const webrtc::IceCandidateInterface*);
+    explicit QWebRTCIceCandidate_impl(const webrtc::JsepIceCandidate*);
 
     virtual QByteArray sdp() const override;
 
