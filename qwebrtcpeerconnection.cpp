@@ -104,6 +104,13 @@ QVariantMap RTCOfferAnserOptionsToMap(const webrtc::PeerConnectionInterface::RTC
     return result;
 }
 
+void QWebRTCPeerConnection::close()
+{
+    if(m_impl->_conn) {
+        m_impl->_conn->Close();
+    }
+}
+
 void QWebRTCPeerConnection::createOfferForConstraints(const QVariantMap& constraints,
         std::function<void(const std::shared_ptr<QWebRTCSessionDescription>&)> completionHandler)
 {
@@ -254,9 +261,18 @@ std::shared_ptr<QWebRTCSessionDescription> QWebRTCPeerConnection::currentRemoteD
 
 QWebRTCPeerConnection::SignalingState QWebRTCPeerConnection::signalingState()
 {
-    return static_cast<QWebRTCPeerConnection::SignalingState>(m_impl->m_signalingState);
+    return static_cast<QWebRTCPeerConnection::SignalingState>(m_impl->_conn->signaling_state());
 }
 
+QWebRTCPeerConnection::IceConnectionState QWebRTCPeerConnection::iceConnectionState()
+{
+    return static_cast<QWebRTCPeerConnection::IceConnectionState>(m_impl->_conn->ice_connection_state());
+}
+
+QWebRTCPeerConnection::IceGatheringState QWebRTCPeerConnection::iceGatheringState()
+{
+    return static_cast<QWebRTCPeerConnection::IceGatheringState>(m_impl->_conn->ice_gathering_state());
+}
 
 QWebRTCPeerConnection::QWebRTCPeerConnection()
     : m_impl(std::make_shared<QWebRTCPeerConnection_impl>(this))
@@ -264,7 +280,7 @@ QWebRTCPeerConnection::QWebRTCPeerConnection()
 }
 
 QWebRTCPeerConnection_impl::QWebRTCPeerConnection_impl(QWebRTCPeerConnection* q_ptr)
-    : q_ptr(q_ptr), m_signalingState(webrtc::PeerConnectionInterface::SignalingState::kClosed)
+    : q_ptr(q_ptr)
 {
     qDebug() << "Creating QWebRTCPeerConnection";
 }
@@ -275,8 +291,8 @@ QWebRTCPeerConnection_impl::~QWebRTCPeerConnection_impl() {
 
 void QWebRTCPeerConnection_impl::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state)
 {
-    m_signalingState = new_state;
     qDebug() << "signaling change " << (int) new_state;
+    q_ptr->signalingChange();
 }
 
 void QWebRTCPeerConnection_impl::OnAddStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) {
@@ -293,8 +309,7 @@ void QWebRTCPeerConnection_impl::OnRemoveStream(rtc::scoped_refptr<webrtc::Media
 
 void QWebRTCPeerConnection_impl::OnRemoveStream(webrtc::MediaStreamInterface* stream)
 {
-    assert(false);
-    qDebug() << "stream removed";
+    // Don't do anything here. The scoped pointer function will be called with the same datachannel after
 }
 
 void QWebRTCPeerConnection_impl::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel)
@@ -305,8 +320,7 @@ void QWebRTCPeerConnection_impl::OnDataChannel(rtc::scoped_refptr<webrtc::DataCh
 
 void QWebRTCPeerConnection_impl::OnDataChannel(webrtc::DataChannelInterface* data_channel)
 {
-    assert(false);
-    qDebug() << "New data channel";
+    // Don't do anything here. The scoped pointer function will be called with the same datachannel after
 }
 
 void QWebRTCPeerConnection_impl::OnRenegotiationNeeded() {
@@ -316,12 +330,12 @@ void QWebRTCPeerConnection_impl::OnRenegotiationNeeded() {
 
 void QWebRTCPeerConnection_impl::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState new_state)
 {
-
+    Q_EMIT q_ptr->iceConnectionStateChanged();
 }
 
 void QWebRTCPeerConnection_impl::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState new_state)
 {
-
+    Q_EMIT q_ptr->iceGatheringChanged();
 }
 
 void QWebRTCPeerConnection_impl::OnIceCandidate(const webrtc::IceCandidateInterface* candidate) {

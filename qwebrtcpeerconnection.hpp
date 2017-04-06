@@ -25,6 +25,25 @@ public:
         Closed
     };
 
+    enum class IceConnectionState {
+        New,
+        Checking,
+        Connected,
+        Completed,
+        Failed,
+        Disconnected,
+        Closed,
+        Count
+    };
+
+    enum class IceGatheringState {
+        New,
+        Gathering,
+        Complete
+    };
+
+    void close();
+
     void createOfferForConstraints(const QVariantMap& constraints,
             std::function<void(const std::shared_ptr<QWebRTCSessionDescription>&)>);
     void createAnswerForConstraints(const QVariantMap& constraints,
@@ -50,9 +69,13 @@ public:
     std::shared_ptr<QWebRTCSessionDescription> currentRemoteDescription();
 
     SignalingState signalingState();
+    IceConnectionState iceConnectionState();
+    IceGatheringState iceGatheringState();
 
 Q_SIGNALS:
     void signalingChange();
+    void iceConnectionStateChanged();
+    void iceGatheringChanged();
     void streamAdded(const std::shared_ptr<QWebRTCMediaStream>&);
     void streamRemoved(const std::shared_ptr<QWebRTCMediaStream>&);
     void newIceCandidate(const std::shared_ptr<QWebRTCIceCandidate>&);

@@ -74,5 +74,4 @@ public:
     std::shared_ptr<QWebRTCPeerConnectionFactory_impl> m_factory;
 
     QWebRTCPeerConnection* q_ptr;
-    webrtc::PeerConnectionInterface::SignalingState m_signalingState;
 };

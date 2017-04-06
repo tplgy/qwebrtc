@@ -27,10 +27,10 @@ std::shared_ptr<QWebRTCSessionDescription> sessionFromJSON(const QJsonObject& ob
 
 std::shared_ptr<QWebRTCIceCandidate> iceCandidateFromJSON(const QJsonObject& obj)
 {
-    if (obj.value(QLatin1String("id")).isString() && obj.value(QLatin1String("candidate")).isString() && obj.value(QLatin1String("label")).isDouble()) {
-        QString mid = obj.value(QLatin1String("id")).toString();
+    if (obj.value(QLatin1String("sdpMid")).isString() && obj.value(QLatin1String("candidate")).isString() && obj.value(QLatin1String("sdpMLineIndex")).isDouble()) {
+        QString mid = obj.value(QLatin1String("sdpMid")).toString();
         QString sdp = obj.value(QLatin1String("candidate")).toString();
-        int num = obj.value(QLatin1String("label")).toInt(-1);
+        int num = obj.value(QLatin1String("sdpMLineIndex")).toInt(-1);
         if (num == -1 || sdp.isEmpty() || mid.isEmpty()) {
             qWarning() << "Bad JSON for ICE candidate " << mid << " || " << sdp << " || " << num;
             return nullptr;
@@ -38,7 +38,7 @@ std::shared_ptr<QWebRTCIceCandidate> iceCandidateFromJSON(const QJsonObject& obj
 
         return QWebRTCPeerConnection::createIceCandidate(mid.toUtf8(), num, sdp.toUtf8());
     } else {
-        qWarning() << "Bad JSON for ICE candidate " << obj.value(QLatin1String("id")).isString() << obj.value(QLatin1String("candidate")).isString() << obj.value(QLatin1String("label")).isString();
+        qWarning() << "Bad JSON for ICE candidate " << obj.value(QLatin1String("sdpMid")).isString() << obj.value(QLatin1String("candidate")).isString() << obj.value(QLatin1String("sdpMLineIndex")).isString();
         return nullptr;
     }
 }
@@ -49,9 +49,9 @@ QJsonObject iceCandidateToJSON(const std::shared_ptr<QWebRTCIceCandidate>& candi
         return QJsonObject();
     }
     return QJsonObject{
-        {"id", QString::fromUtf8(candidate->sdpMediaId())},
+        {"sdpMid", QString::fromUtf8(candidate->sdpMediaId())},
         {"candidate", QString::fromUtf8(candidate->sdp())},
-        {"label", candidate->sdpMLineIndex()}
+        {"sdpMLineIndex", candidate->sdpMLineIndex()}
     };
 }
 

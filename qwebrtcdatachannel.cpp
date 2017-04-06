@@ -3,6 +3,14 @@
 QWebRTCDataChannel_impl::QWebRTCDataChannel_impl(rtc::scoped_refptr<webrtc::DataChannelInterface> nativeDC)
     : m_nativeDataChannel(nativeDC)
 {
+    m_nativeDataChannel->RegisterObserver(this);
+}
+
+QWebRTCDataChannel_impl::~QWebRTCDataChannel_impl()
+{
+    if (channelState() != ChannelState::Closing || channelState() != ChannelState::Closed) {
+        close();
+    }
 }
 
 bool QWebRTCDataChannel_impl::sendData(const QString& str)
@@ -60,4 +68,20 @@ QWebRTCDataChannel::ChannelState QWebRTCDataChannel_impl::channelState()
 uint64_t QWebRTCDataChannel_impl::bufferedAmount()
 {
     return m_nativeDataChannel->buffered_amount();
+}
+
+void QWebRTCDataChannel_impl::OnStateChange()
+{
+    Q_EMIT channelStateChanged();
+}
+
+void QWebRTCDataChannel_impl::OnMessage(const webrtc::DataBuffer& buffer)
+{
+    QByteArray data(reinterpret_cast<const char*>(buffer.data.data()), buffer.data.size());
+    Q_EMIT dataReceived(data);
+}
+
+void QWebRTCDataChannel_impl::OnBufferedAmountChange(uint64_t previous_amount)
+{
+    Q_EMIT bufferAmountChanged();
 }

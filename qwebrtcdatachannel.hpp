@@ -55,4 +55,5 @@ public:
 Q_SIGNALS:
     void dataReceived(QByteArray);
     void channelStateChanged();
+    void bufferAmountChanged();
 };

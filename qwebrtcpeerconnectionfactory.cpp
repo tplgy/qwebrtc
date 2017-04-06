@@ -35,11 +35,13 @@ public:
 
 Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCIceCandidate>)
 Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCMediaStream>)
+Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCDataChannel>)
 
 QWebRTCPeerConnectionFactory::QWebRTCPeerConnectionFactory()
 {
     qRegisterMetaType<std::shared_ptr<QWebRTCIceCandidate> >();
     qRegisterMetaType<std::shared_ptr<QWebRTCMediaStream> >();
+    qRegisterMetaType<std::shared_ptr<QWebRTCDataChannel> >();
     m_impl = std::make_shared<QWebRTCPeerConnectionFactory_impl>();
     m_impl->m_networkingThread = rtc::Thread::CreateWithSocketServer();
     if (!m_impl->m_networkingThread->Start()) {
