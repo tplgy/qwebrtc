@@ -13,15 +13,14 @@ option(ENABLE_TSAN "TSAN build" OFF)
 option(ENABLE_UBSAN "UBSAN build" OFF)
 
 set(CMAKE_CXX_FLAGS "-Wall -Werror -Wno-deprecated-declarations -Wno-error=unused-variable ${CMAKE_CXX_FLAGS}")
-set(CMAKE_SHARED_LINKER_FLAGS "-rpath /Users/Fabian ${CMAKE_SHARED_LINKER_FLAGS}")
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
     set(CMAKE_CXX_FLAGS "-fcolor-diagnostics ${CMAKE_CXX_FLAGS}")
     set(START_GROUP )
     set(END_GROUP )
 endif()
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(START_GROUP -Wl,--start-group)
-    set(END_GROUP -Wl,--end-group)
+    set(START_GROUP "-Wl,--start-group")
+    set(END_GROUP "-Wl,--end-group")
     set(CMAKE_CXX_FLAGS "-fdiagnostics-color=always -Wno-error=maybe-uninitialized -Wno-error=unused-local-typedefs ${CMAKE_CXX_FLAGS}")
 endif()
 
@@ -147,14 +146,6 @@ file(GLOB_RECURSE WEBRTC_OBJ
     "${WebRTCOutDir}/system_wrappers/metrics_default/metrics_default.o"
     "${WebRTCOutDir}/../third_party/openh264/*.o"
 )
-
-if (APPLE)
-    set(START_GROUP )
-    set(END_GROUP )
-else()
-    set(START_GROUP --WL,--start-group)
-    set(END_GROUP -Wl,--end-group)
-endif()
 
 target_link_libraries(${PROJECT_NAME}
     ${START_GROUP}

@@ -62,7 +62,8 @@ QWebRTCDataChannel::ChannelState QWebRTCDataChannel_impl::channelState()
         return QWebRTCDataChannel::Closing;
     case webrtc::DataChannelInterface::DataState::kClosed:
         return QWebRTCDataChannel::Closed;
-    }
+    } 
+    return QWebRTCDataChannel::Closed;
 }
 
 uint64_t QWebRTCDataChannel_impl::bufferedAmount()
