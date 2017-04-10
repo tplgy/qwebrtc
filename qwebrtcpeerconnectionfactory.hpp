@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QString>
+#include <memory>
 
 class QWebRTCPeerConnection;
 class QWebRTCPeerConnectionFactory_impl;

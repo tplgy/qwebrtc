@@ -40,7 +40,7 @@ public:
 
     // Sends data as text
     virtual bool sendData(const QString&) = 0;
-    // Treats the data as binary data
+    // Treats the data as binary data, copies the raw data buffer (i.e. it does not take ownership of the data pointer)
     virtual bool sendData(const QByteArray&) = 0;
     // closes the data channel
     virtual void close() = 0;
