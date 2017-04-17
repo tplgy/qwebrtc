@@ -6,17 +6,29 @@
 
 QByteArray QWebRTCIceCandidate_impl::sdp() const
 {
-    return m_sdp;
+    if (isValid()) {
+        std::string sdpData;
+        if (m_iceCandidate->ToString(&sdpData)) {
+            return QByteArray::fromStdString(sdpData);
+        }
+    }
+    return QByteArray();
 }
 
 QByteArray QWebRTCIceCandidate_impl::sdpMediaId() const
 {
-    return m_sdpMid;
+    if (!isValid()) {
+        return QByteArray();
+    }
+    return QByteArray::fromStdString(m_iceCandidate->sdp_mid());
 }
 
 int QWebRTCIceCandidate_impl::sdpMLineIndex() const
 {
-    return m_sdpMlineIndex;
+    if (!isValid()) {
+        return 0;
+    }
+    return m_iceCandidate->sdp_mline_index();
 }
 
 bool QWebRTCIceCandidate_impl::isValid() const
@@ -24,12 +36,24 @@ bool QWebRTCIceCandidate_impl::isValid() const
     return m_iceCandidate != nullptr;
 }
 
+QString QWebRTCIceCandidate_impl::type() const
+{
+    if (!isValid()) {
+        return QString();
+    }
+    return QString::fromStdString(m_iceCandidate->candidate().type());
+}
+
+webrtc::IceCandidateInterface* QWebRTCIceCandidate_impl::iceCandidate()
+{
+    return m_iceCandidate.get();
+}
+
 QWebRTCIceCandidate_impl::QWebRTCIceCandidate_impl(QByteArray sdpMid, int sdpIndex, const QByteArray& sdp)
-    : m_sdpMid(sdpMid), m_sdp(sdp), m_sdpMlineIndex(sdpIndex)
 {
     webrtc::SdpParseError error;
-    m_iceCandidate = std::shared_ptr<webrtc::IceCandidateInterface>(webrtc::CreateIceCandidate(sdpMid.toStdString(), sdpIndex,
-                        sdp.toStdString(), &error));
+    m_iceCandidate = std::unique_ptr<webrtc::IceCandidateInterface>(webrtc::CreateIceCandidate(sdpMid.toStdString(), sdpIndex,
+                sdp.toStdString(), &error));
     if (!m_iceCandidate) {
         qWarning() << "Ice candidate parsing error: " << QByteArray::fromStdString(error.line) << " " << QByteArray::fromStdString(error.description);
         assert(true);
@@ -39,17 +63,6 @@ QWebRTCIceCandidate_impl::QWebRTCIceCandidate_impl(QByteArray sdpMid, int sdpInd
 QWebRTCIceCandidate_impl::QWebRTCIceCandidate_impl(const webrtc::IceCandidateInterface* candidate)
 {
     if (candidate) {
-        std::string sdpData;
-        if (candidate->ToString(&sdpData)) {
-            m_sdp = QByteArray::fromStdString(sdpData);
-            m_sdpMid = QByteArray::fromStdString(candidate->sdp_mid());
-            m_sdpMlineIndex = candidate->sdp_mline_index();
-        }
+        m_iceCandidate = std::unique_ptr<webrtc::IceCandidateInterface>(new webrtc::JsepIceCandidate(candidate->sdp_mid(), candidate->sdp_mline_index(), candidate->candidate()));
     }
-}
-
-QWebRTCIceCandidate_impl::QWebRTCIceCandidate_impl(const webrtc::JsepIceCandidate* candidate)
-{
-    m_sdpMlineIndex = candidate->sdp_mline_index();
-    m_sdpMid = QByteArray::fromStdString(candidate->sdp_mid());
 }

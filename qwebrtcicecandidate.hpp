@@ -19,4 +19,6 @@ public:
     virtual int sdpMLineIndex() const = 0;
 
     virtual bool isValid() const = 0;
+
+    virtual QString type() const = 0;
 };

@@ -33,7 +33,6 @@ class QWebRTCIceCandidate_impl : public QWebRTCIceCandidate {
 public:
     QWebRTCIceCandidate_impl(QByteArray sdpMid, int sdpIndex, const QByteArray& sdp);
     explicit QWebRTCIceCandidate_impl(const webrtc::IceCandidateInterface*);
-    explicit QWebRTCIceCandidate_impl(const webrtc::JsepIceCandidate*);
 
     virtual QByteArray sdp() const override;
 
@@ -43,8 +42,10 @@ public:
 
     virtual bool isValid() const override;
 
-    QByteArray m_sdpMid;
-    QByteArray m_sdp;
-    int m_sdpMlineIndex;
-    std::shared_ptr<webrtc::IceCandidateInterface> m_iceCandidate;
+    virtual QString type() const override;
+
+    webrtc::IceCandidateInterface* iceCandidate();
+
+private:
+    std::unique_ptr<webrtc::IceCandidateInterface> m_iceCandidate;
 };

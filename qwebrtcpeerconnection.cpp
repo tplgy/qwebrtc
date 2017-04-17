@@ -207,7 +207,7 @@ void QWebRTCPeerConnection::addIceCandidate(const std::shared_ptr<QWebRTCIceCand
     assert(m_impl->_conn);
     if (iceCandidate->isValid()) {
         m_impl->_conn->AddIceCandidate(
-                    std::static_pointer_cast<QWebRTCIceCandidate_impl>(iceCandidate)->m_iceCandidate.get());
+                    std::static_pointer_cast<QWebRTCIceCandidate_impl>(iceCandidate)->iceCandidate());
     } else {
         qWarning() << "invalid ICE candidate";
     }
@@ -219,7 +219,7 @@ void QWebRTCPeerConnection::removeIceCandidate(const std::shared_ptr<QWebRTCIceC
     assert(m_impl->_conn);
     if (iceCandidate->isValid()) {
         m_impl->_conn->AddIceCandidate(
-                    std::static_pointer_cast<QWebRTCIceCandidate_impl>(iceCandidate)->m_iceCandidate.get());
+                    std::static_pointer_cast<QWebRTCIceCandidate_impl>(iceCandidate)->iceCandidate());
     } else {
         qWarning() << "invalid ICE candidate";
     }
