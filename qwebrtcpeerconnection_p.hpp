@@ -15,9 +15,9 @@ class QWebRTCCreateSessionDescriptionObserver_p : public webrtc::CreateSessionDe
 public:
     virtual void OnSuccess(webrtc::SessionDescriptionInterface* desc) override;
     virtual void OnFailure(const std::string& error) override;
-    void invokeHandler(const std::shared_ptr<QWebRTCSessionDescription>&);
+    void invokeHandler(const QSharedPointer<QWebRTCSessionDescription>&);
     //std::weak_ptr<QWebRTCPeerConnection_impl> impl;
-    std::function<void(const std::shared_ptr<QWebRTCSessionDescription>&)> m_completionHandler;
+    std::function<void(const QSharedPointer<QWebRTCSessionDescription>&)> m_completionHandler;
 };
 
 class QWebRTCSetSessionDescriptionObserver_p : public webrtc::SetSessionDescriptionObserver {
@@ -28,14 +28,14 @@ public:
 //    std::weak_ptr<QWebRTCPeerConnection_impl> impl;
     std::function<void(bool)> m_completionHandler;
     bool m_remoteDescription = false;
-    std::shared_ptr<QWebRTCSessionDescription> m_description;
+    QSharedPointer<QWebRTCSessionDescription> m_description;
 };
 
 class QWebRTCPeerConnectionFactory_impl;
 class QWebRTCPeerConnection_impl : public webrtc::PeerConnectionObserver {
 public:
     explicit QWebRTCPeerConnection_impl(QWebRTCPeerConnection* q_ptr);
-    ~QWebRTCPeerConnection_impl();
+    virtual ~QWebRTCPeerConnection_impl();
 
     virtual void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state) override;
 
@@ -65,13 +65,12 @@ public:
         const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams)  override;
 
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> _conn;
-    //QList<rtc::scoped_refptr<QWebRTCCreateSessionDescriptionObserver_p>> m_createObservers;
-    //QList<rtc::scoped_refptr<QWebRTCSetSessionDescriptionObserver_p>> m_setObservers;
-    std::shared_ptr<QWebRTCSessionDescription> m_remoteDescription;
-    std::shared_ptr<QWebRTCSessionDescription> m_localDescription;
+
+    QSharedPointer<QWebRTCSessionDescription> m_remoteDescription;
+    QSharedPointer<QWebRTCSessionDescription> m_localDescription;
 
     //We need to keep the factory around till all peer connections are destroyed.
-    std::shared_ptr<QWebRTCPeerConnectionFactory_impl> m_factory;
+    QSharedPointer<QWebRTCPeerConnectionFactory_impl> m_factory;
 
     QWebRTCPeerConnection* q_ptr;
 };

@@ -56,7 +56,7 @@ public:
     VideoFrameTexture();
     ~VideoFrameTexture();
 
-    void newVideoFrame(std::shared_ptr<webrtc::VideoFrame> frame);
+    void newVideoFrame(QSharedPointer<webrtc::VideoFrame> frame);
 
     virtual void bind() override;
 
@@ -82,7 +82,7 @@ VideoFrameTexture::~VideoFrameTexture()
     glDeleteTextures(1, &m_texture);
 }
 
-void VideoFrameTexture::newVideoFrame(std::shared_ptr<webrtc::VideoFrame> frame)
+void VideoFrameTexture::newVideoFrame(QSharedPointer<webrtc::VideoFrame> frame)
 {
     m_size = QSize(frame->width(), frame->height());
     size_t bufferSize = m_size.width() * m_size.height() * 4;
@@ -231,7 +231,7 @@ QWebRTCQuickVideoItem_p::QWebRTCQuickVideoItem_p(QWebRTCQuickVideoItem* q)
 void QWebRTCQuickVideoItem_p::OnFrame(const webrtc::VideoFrame& frame)
 {
     std::lock_guard<std::recursive_mutex> locker(videoMutex);
-    m_frame = std::make_shared<webrtc::VideoFrame>(frame);
+    m_frame = QSharedPointer<webrtc::VideoFrame>(new webrtc::VideoFrame(frame));
     if (m_sourceSize.width() != frame.width() || m_sourceSize.height() != frame.height()) {
         m_sourceSize = QSize(frame.width(), frame.height());
         Q_EMIT q_ptr->sourceSizeChanged();

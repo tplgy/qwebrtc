@@ -15,7 +15,6 @@
 
 class QWebRTCPeerConnectionFactory_impl {
 public:
-    //~QWebRTCPeerConnectionFactory_impl();
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> native_interface;
 
     std::unique_ptr<rtc::Thread> m_workerThread;
@@ -33,16 +32,16 @@ public:
 //    }
 //}
 
-Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCIceCandidate>)
-Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCMediaStream>)
-Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCDataChannel>)
+//Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCIceCandidate>)
+//Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCMediaStream>)
+//Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCDataChannel>)
 
 QWebRTCPeerConnectionFactory::QWebRTCPeerConnectionFactory()
 {
-    qRegisterMetaType<std::shared_ptr<QWebRTCIceCandidate> >();
-    qRegisterMetaType<std::shared_ptr<QWebRTCMediaStream> >();
-    qRegisterMetaType<std::shared_ptr<QWebRTCDataChannel> >();
-    m_impl = std::make_shared<QWebRTCPeerConnectionFactory_impl>();
+//    qRegisterMetaType<std::shared_ptr<QWebRTCIceCandidate> >();
+//    qRegisterMetaType<std::shared_ptr<QWebRTCMediaStream> >();
+//    qRegisterMetaType<std::shared_ptr<QWebRTCDataChannel> >();
+    m_impl = QSharedPointer<QWebRTCPeerConnectionFactory_impl>(new QWebRTCPeerConnectionFactory_impl());
     m_impl->m_networkingThread = rtc::Thread::CreateWithSocketServer();
     if (!m_impl->m_networkingThread->Start()) {
         qWarning() << "Faild to start networking thread";
@@ -67,21 +66,21 @@ QWebRTCPeerConnectionFactory::QWebRTCPeerConnectionFactory()
                 nullptr, nullptr, nullptr/*encoder_factory, decoder_factory*/);
 }
 
-std::shared_ptr<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createAudioTrack(const QVariantMap& constraints, const QString& label)
+QSharedPointer<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createAudioTrack(const QVariantMap& constraints, const QString& label)
 {
     auto audioSource = m_impl->native_interface->CreateAudioSource(0);
     auto audioTrack = m_impl->native_interface->CreateAudioTrack(label.toStdString(), audioSource);
-    return std::make_shared<QWebRTCMediaTrack_impl>(audioTrack);
+    return QSharedPointer<QWebRTCMediaTrack>(new QWebRTCMediaTrack_impl(audioTrack));
 }
 
-std::shared_ptr<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createVideoTrack(const QVariantMap& constraints, const QString& label)
+QSharedPointer<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createVideoTrack(const QVariantMap& constraints, const QString& label)
 {
     std::vector<std::string> device_names;
     {
         std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> info(
                     webrtc::VideoCaptureFactory::CreateDeviceInfo());
         if (!info) {
-            return nullptr;
+            return QSharedPointer<QWebRTCMediaTrack>();
         }
         int num_devices = info->NumberOfDevices();
         for (int i = 0; i < num_devices; ++i) {
@@ -105,29 +104,29 @@ std::shared_ptr<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createVideoTrac
     }
     if (!capturer) {
         qWarning() << "Could not find a camera device";
-        return nullptr;
+        return QSharedPointer<QWebRTCMediaTrack>();
     }
 
     auto videoSource = m_impl->native_interface->CreateVideoSource(capturer);
     auto videoTrack = m_impl->native_interface->CreateVideoTrack(label.toStdString(), videoSource);
-    return std::make_shared<QWebRTCMediaTrack_impl>(videoTrack, videoSource);
+    return QSharedPointer<QWebRTCMediaTrack>(new QWebRTCMediaTrack_impl(videoTrack, videoSource));
 }
 
-std::shared_ptr<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createScreenCaptureTrack(const QString& label)
+QSharedPointer<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createScreenCaptureTrack(const QString& label)
 {
     auto videoSource = new rtc::RefCountedObject<QWebRTCDesktopVideoSource>();
     videoSource->moveToThread(QCoreApplication::instance()->thread());
     videoSource->Start();
     auto videoTrack = m_impl->native_interface->CreateVideoTrack(label.toStdString(), videoSource);
-    return std::make_shared<QWebRTCMediaTrack_impl>(videoTrack, videoSource);
+    return QSharedPointer<QWebRTCMediaTrack>(new QWebRTCMediaTrack_impl(videoTrack, videoSource));
 }
 
-std::shared_ptr<QWebRTCMediaStream> QWebRTCPeerConnectionFactory::createMediaStream(const QString& label)
+QSharedPointer<QWebRTCMediaStream> QWebRTCPeerConnectionFactory::createMediaStream(const QString& label)
 {
-   return std::make_shared<QWebRTCMediaStream_impl>(m_impl->native_interface->CreateLocalMediaStream(label.toStdString()));
+   return QSharedPointer<QWebRTCMediaStream>(new QWebRTCMediaStream_impl(m_impl->native_interface->CreateLocalMediaStream(label.toStdString())));
 }
 
-std::shared_ptr<QWebRTCPeerConnection> QWebRTCPeerConnectionFactory::createPeerConnection(const QWebRTCConfiguration& config)
+QSharedPointer<QWebRTCPeerConnection> QWebRTCPeerConnectionFactory::createPeerConnection(const QWebRTCConfiguration& config)
 {
     rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
     auto webRTCCOnfig = webrtc::PeerConnectionInterface::RTCConfiguration();
@@ -143,10 +142,9 @@ std::shared_ptr<QWebRTCPeerConnection> QWebRTCPeerConnectionFactory::createPeerC
         servers.push_back(iceS);
     }
     webRTCCOnfig.servers = servers;
-    auto conn = std::shared_ptr<QWebRTCPeerConnection>(new QWebRTCPeerConnection());
+    auto conn = QSharedPointer<QWebRTCPeerConnection>(new QWebRTCPeerConnection());
     conn->m_impl->m_factory = m_impl;
     conn->m_impl->_conn = m_impl->native_interface->CreatePeerConnection(webRTCCOnfig,
-            nullptr, nullptr, conn->m_impl.get());
-    qDebug() << conn->m_impl.get();
+            nullptr, nullptr, conn->m_impl);
     return conn;
 }

@@ -45,45 +45,46 @@ public:
     void close();
 
     void createOfferForConstraints(const QVariantMap& constraints,
-            std::function<void(const std::shared_ptr<QWebRTCSessionDescription>&)>);
+            std::function<void(const QSharedPointer<QWebRTCSessionDescription>&)>);
     void createAnswerForConstraints(const QVariantMap& constraints,
-            std::function<void(const std::shared_ptr<QWebRTCSessionDescription>&)>);
+            std::function<void(const QSharedPointer<QWebRTCSessionDescription>&)>);
 
-    void addStream(const std::shared_ptr<QWebRTCMediaStream>&);
-    void removeStream(const std::shared_ptr<QWebRTCMediaStream>&);
+    void addStream(const QSharedPointer<QWebRTCMediaStream>&);
+    void removeStream(const QSharedPointer<QWebRTCMediaStream>&);
 
     void setConfiguration();
 
-    void setLocalDescription(const std::shared_ptr<QWebRTCSessionDescription>&, std::function<void(bool)>);
-    void setRemoteDescription(const std::shared_ptr<QWebRTCSessionDescription>&, std::function<void(bool)>);
+    void setLocalDescription(const QSharedPointer<QWebRTCSessionDescription>&, std::function<void(bool)>);
+    void setRemoteDescription(const QSharedPointer<QWebRTCSessionDescription>&, std::function<void(bool)>);
 
-    void addIceCandidate(const std::shared_ptr<QWebRTCIceCandidate>&);
-    void removeIceCandidate(const std::shared_ptr<QWebRTCIceCandidate>&);
+    void addIceCandidate(const QSharedPointer<QWebRTCIceCandidate>&);
+    void removeIceCandidate(const QSharedPointer<QWebRTCIceCandidate>&);
 
-    std::shared_ptr<QWebRTCDataChannel> dataChannelForLabel(const QString& label, const QWebRTCDataChannelConfig& config);
+    QSharedPointer<QWebRTCDataChannel> dataChannelForLabel(const QString& label, const QWebRTCDataChannelConfig& config);
 
-    static std::shared_ptr<QWebRTCSessionDescription> createSessionDescription(QWebRTCSessionDescription::SDPType, const QByteArray&);
-    static std::shared_ptr<QWebRTCIceCandidate> createIceCandidate(QByteArray mId, int sdpMLineIndex, const QByteArray& sdpData);
+    static QSharedPointer<QWebRTCSessionDescription> createSessionDescription(QWebRTCSessionDescription::SDPType, const QByteArray&);
+    static QSharedPointer<QWebRTCIceCandidate> createIceCandidate(QByteArray mId, int sdpMLineIndex, const QByteArray& sdpData);
 
-    std::shared_ptr<QWebRTCSessionDescription> currentLocalDescription();
-    std::shared_ptr<QWebRTCSessionDescription> currentRemoteDescription();
+    QSharedPointer<QWebRTCSessionDescription> currentLocalDescription();
+    QSharedPointer<QWebRTCSessionDescription> currentRemoteDescription();
 
     SignalingState signalingState();
     IceConnectionState iceConnectionState();
     IceGatheringState iceGatheringState();
 
+    ~QWebRTCPeerConnection();
 Q_SIGNALS:
     void signalingChange();
     void iceConnectionStateChanged();
     void iceGatheringChanged();
-    void streamAdded(const std::shared_ptr<QWebRTCMediaStream>&);
-    void streamRemoved(const std::shared_ptr<QWebRTCMediaStream>&);
-    void newIceCandidate(const std::shared_ptr<QWebRTCIceCandidate>&);
-    void iceCandidateRemoved(std::shared_ptr<QWebRTCIceCandidate>);
+    void streamAdded(const QSharedPointer<QWebRTCMediaStream>&);
+    void streamRemoved(const QSharedPointer<QWebRTCMediaStream>&);
+    void newIceCandidate(const QSharedPointer<QWebRTCIceCandidate>&);
+    void iceCandidateRemoved(QSharedPointer<QWebRTCIceCandidate>);
     void renegotiationNeeded();
-    void dataChannelReceived(const std::shared_ptr<QWebRTCDataChannel>&);
+    void dataChannelReceived(const QSharedPointer<QWebRTCDataChannel>&);
 
 private:
     QWebRTCPeerConnection();
-    std::shared_ptr<QWebRTCPeerConnection_impl> m_impl;
+    QWebRTCPeerConnection_impl* m_impl;
 };

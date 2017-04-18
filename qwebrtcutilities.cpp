@@ -5,7 +5,7 @@
 #include <QDebug>
 
 namespace QWebRTCUtilities {
-std::shared_ptr<QWebRTCSessionDescription> sessionFromJSON(const QJsonObject& obj)
+QSharedPointer<QWebRTCSessionDescription> sessionFromJSON(const QJsonObject& obj)
 {
     if (obj.value(QLatin1String("sdp")).isString() && obj.value(QLatin1String("type")).isString()) {
         QString sdp = obj.value(QLatin1String("sdp")).toString();
@@ -21,11 +21,11 @@ std::shared_ptr<QWebRTCSessionDescription> sessionFromJSON(const QJsonObject& ob
 
         return QWebRTCPeerConnection::createSessionDescription(type, sdp.toUtf8());
     } else {
-        return nullptr;
+        return QSharedPointer<QWebRTCSessionDescription>();
     }
 }
 
-std::shared_ptr<QWebRTCIceCandidate> iceCandidateFromJSON(const QJsonObject& obj)
+QSharedPointer<QWebRTCIceCandidate> iceCandidateFromJSON(const QJsonObject& obj)
 {
     if (obj.value(QLatin1String("sdpMid")).isString() && obj.value(QLatin1String("candidate")).isString() && obj.value(QLatin1String("sdpMLineIndex")).isDouble()) {
         QString mid = obj.value(QLatin1String("sdpMid")).toString();
@@ -33,17 +33,17 @@ std::shared_ptr<QWebRTCIceCandidate> iceCandidateFromJSON(const QJsonObject& obj
         int num = obj.value(QLatin1String("sdpMLineIndex")).toInt(-1);
         if (num == -1 || sdp.isEmpty() || mid.isEmpty()) {
             qWarning() << "Bad JSON for ICE candidate " << mid << " || " << sdp << " || " << num;
-            return nullptr;
+            return QSharedPointer<QWebRTCIceCandidate>();
         }
 
         return QWebRTCPeerConnection::createIceCandidate(mid.toUtf8(), num, sdp.toUtf8());
     } else {
         qWarning() << "Bad JSON for ICE candidate " << obj.value(QLatin1String("sdpMid")).isString() << obj.value(QLatin1String("candidate")).isString() << obj.value(QLatin1String("sdpMLineIndex")).isString();
-        return nullptr;
+        return QSharedPointer<QWebRTCIceCandidate>();
     }
 }
 
-QJsonObject iceCandidateToJSON(const std::shared_ptr<QWebRTCIceCandidate>& candidate)
+QJsonObject iceCandidateToJSON(const QSharedPointer<QWebRTCIceCandidate>& candidate)
 {
     if (!candidate) {
         return QJsonObject();
@@ -55,7 +55,7 @@ QJsonObject iceCandidateToJSON(const std::shared_ptr<QWebRTCIceCandidate>& candi
     };
 }
 
-QJsonObject sessionToJSON(const std::shared_ptr<QWebRTCSessionDescription>& description)
+QJsonObject sessionToJSON(const QSharedPointer<QWebRTCSessionDescription>& description)
 {
     if (!description) {
         return QJsonObject();

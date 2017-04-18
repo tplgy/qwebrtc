@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QString>
-#include <memory>
+#include <QSharedPointer>
 
 class QWebRTCPeerConnection;
 class QWebRTCPeerConnectionFactory_impl;
@@ -14,16 +14,18 @@ class QWebRTCPeerConnectionFactory : public QObject {
 public:
     QWebRTCPeerConnectionFactory();
 
-    std::shared_ptr<QWebRTCMediaTrack> createAudioTrack(const QVariantMap& constraints, const QString& trackId = QString());
+    QSharedPointer<QWebRTCMediaTrack> createAudioTrack(const QVariantMap& constraints, const QString& trackId = QString());
 
-    std::shared_ptr<QWebRTCMediaTrack> createVideoTrack(const QVariantMap& constraints, const QString& trackId = QString());
+    QSharedPointer<QWebRTCMediaTrack> createVideoTrack(const QVariantMap& constraints, const QString& trackId = QString());
 
-    std::shared_ptr<QWebRTCMediaTrack> createScreenCaptureTrack(const QString& trackId = QString());
+    QSharedPointer<QWebRTCMediaTrack> createScreenCaptureTrack(const QString& trackId = QString());
 
-    std::shared_ptr<QWebRTCMediaStream> createMediaStream(const QString& label);
+    QSharedPointer<QWebRTCMediaStream> createMediaStream(const QString& label);
 
-    std::shared_ptr<QWebRTCPeerConnection> createPeerConnection(const QWebRTCConfiguration&);
+    QSharedPointer<QWebRTCPeerConnection> createPeerConnection(const QWebRTCConfiguration&);
 
 private:
-    std::shared_ptr<QWebRTCPeerConnectionFactory_impl> m_impl;
+    // This pointer is shared among all peer connections to ensure that all resources allocated by the
+    // factory are not deallocated (e.g. the webrtc threads)
+    QSharedPointer<QWebRTCPeerConnectionFactory_impl> m_impl;
 };

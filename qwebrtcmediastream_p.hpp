@@ -3,17 +3,18 @@
 #include "qwebrtcmediastream.hpp"
 #include <webrtc/api/mediastreaminterface.h>
 #include <QList>
+#include <QSharedPointer>
 
 class QWebRTCMediaStream_impl : public QWebRTCMediaStream {
 public:
     explicit QWebRTCMediaStream_impl(const rtc::scoped_refptr<webrtc::MediaStreamInterface>& stream);
 
-    virtual void addTrack(const std::shared_ptr<QWebRTCMediaTrack>&) override;
-    virtual void removeTrack(const std::shared_ptr<QWebRTCMediaTrack>&) override;
-    virtual QList<std::shared_ptr<QWebRTCMediaTrack>> tracks() override;
+    virtual void addTrack(const QSharedPointer<QWebRTCMediaTrack>&) override;
+    virtual void removeTrack(const QSharedPointer<QWebRTCMediaTrack>&) override;
+    virtual QList<QSharedPointer<QWebRTCMediaTrack>> tracks() override;
 
     virtual QString label() override;
 
-    QList<std::shared_ptr<QWebRTCMediaTrack>> m_tracks;
+    QList<QSharedPointer<QWebRTCMediaTrack>> m_tracks;
     rtc::scoped_refptr<webrtc::MediaStreamInterface> m_nativeStream;
 };

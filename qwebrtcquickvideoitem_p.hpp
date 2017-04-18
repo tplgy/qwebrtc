@@ -12,7 +12,7 @@ public:
     explicit QWebRTCQuickVideoItem_p(QWebRTCQuickVideoItem*);
     virtual void OnFrame(const webrtc::VideoFrame& frame) override;
 
-    std::shared_ptr<webrtc::VideoFrame> m_frame;
+    QSharedPointer<webrtc::VideoFrame> m_frame;
     QWebRTCMediaTrack_impl* m_track;
     QWebRTCQuickVideoItem *q_ptr;
     std::recursive_mutex videoMutex;

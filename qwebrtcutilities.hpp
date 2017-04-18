@@ -1,12 +1,13 @@
 #pragma once
 
 #include <QVariantMap>
+#include <QSharedPointer>
 #include "qwebrtcsessiondescription.hpp"
 #include "qwebrtcicecandidate.hpp"
 
 namespace QWebRTCUtilities {
-std::shared_ptr<QWebRTCSessionDescription> sessionFromJSON(const QJsonObject&);
-std::shared_ptr<QWebRTCIceCandidate> iceCandidateFromJSON(const QJsonObject&);
-QJsonObject iceCandidateToJSON(const std::shared_ptr<QWebRTCIceCandidate>&);
-QJsonObject sessionToJSON(const std::shared_ptr<QWebRTCSessionDescription>&);
+QSharedPointer<QWebRTCSessionDescription> sessionFromJSON(const QJsonObject&);
+QSharedPointer<QWebRTCIceCandidate> iceCandidateFromJSON(const QJsonObject&);
+QJsonObject iceCandidateToJSON(const QSharedPointer<QWebRTCIceCandidate>&);
+QJsonObject sessionToJSON(const QSharedPointer<QWebRTCSessionDescription>&);
 }
