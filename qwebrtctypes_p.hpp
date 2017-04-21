@@ -45,4 +45,7 @@ public:
     virtual QString type() const override;
 
     webrtc::IceCandidateInterface* iceCandidate();
+
+private:
+    std::unique_ptr<webrtc::IceCandidateInterface> m_iceCandidate;
 };

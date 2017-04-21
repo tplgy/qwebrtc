@@ -35,7 +35,7 @@ if not os.path.exists(webrtc_dir):
         exit(r)
 
     os.chdir(webrtc_src_dir)
-    r = subprocess.call("git checkout branch-heads/57", shell=True)
+    r = subprocess.call("git checkout branch-heads/59", shell=True)
     if r != 0:
         exit(r)
     r = subprocess.call("gclient sync --shallow", shell=True)
@@ -48,7 +48,7 @@ is_debug = "true"
 if args.release:
     is_debug = "false"
 
-r = subprocess.call("gn gen out/Default --args='rtc_include_tests=false is_component_ffmpeg=true proprietary_codecs=true is_debug="+is_debug+" libyuv_include_tests=false rtc_use_h264=true use_external_popup_menu=false rtc_use_gtk=false'", shell=True)
+r = subprocess.call("gn gen out/Default --args='rtc_include_tests=false is_component_ffmpeg=true proprietary_codecs=true is_debug="+is_debug+" libyuv_include_tests=false rtc_use_h264=true rtc_use_gtk=false'", shell=True)
 if r != 0:
     exit(r)
 exit(subprocess.call("ninja -C out/Default", shell=True))

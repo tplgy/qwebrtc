@@ -6,6 +6,9 @@ set(CMAKE_AUTOMOC ON)
 #set(CMAKE_SKIP_RPATH 1)
 set(CMAKE_MACOSX_RPATH 1)
 add_definitions(-DWEBRTC_POSIX)
+if (APPLE)
+    add_definitions(-DWEBRTC_MAC)
+endif()
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 option(ENABLE_ASAN "ASAN build" OFF)
@@ -164,10 +167,10 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/base/librtc_task_queue.a"
     "${WebRTCOutDir}/media/librtc_media.a"
     "${WebRTCOutDir}/media/librtc_media_base.a"
-    "${WebRTCOutDir}/api/libjingle_peerconnection.a"
+    "${WebRTCOutDir}/api/libjingle_peerconnection_api.a"
     "${WebRTCOutDir}/../third_party/usrsctp/libusrsctp.a"
     "${WebRTCOutDir}/../third_party/libsrtp/libsrtp.a"
-    "${WebRTCOutDir}/../third_party/libyuv/libyuv.a"
+    "${WebRTCOutDir}/../third_party/libyuv/libyuv_internal.a"
     "${WebRTCOutDir}/../third_party/opus/libopus.a"
     "${WebRTCOutDir}/../third_party/protobuf/libprotobuf_full.a"
     "${WebRTCOutDir}/../third_party/ffmpeg/libffmpeg_yasm.a"
@@ -202,7 +205,7 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/stats/librtc_stats.a"
     "${WebRTCOutDir}/modules/video_capture/libvideo_capture_internal_impl.a"
     "${WebRTCOutDir}/modules/video_capture/libvideo_capture_module.a"
-    "${WebRTCOutDir}/modules/video_capture/libvideo_capture.a"
+    #"${WebRTCOutDir}/modules/video_capture/libvideo_capture.a"
     ${END_GROUP}
     Qt5::Core
     Qt5::Quick

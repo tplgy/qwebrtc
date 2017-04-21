@@ -313,20 +313,10 @@ void QWebRTCPeerConnection_impl::OnRemoveStream(rtc::scoped_refptr<webrtc::Media
     Q_EMIT q_ptr->streamRemoved(qStream);
 }
 
-void QWebRTCPeerConnection_impl::OnRemoveStream(webrtc::MediaStreamInterface* stream)
-{
-    // Don't do anything here. The scoped pointer function will be called with the same datachannel after
-}
-
 void QWebRTCPeerConnection_impl::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel)
 {
     qDebug() << "New data channel";
     Q_EMIT q_ptr->dataChannelReceived(QSharedPointer<QWebRTCDataChannel_impl>(new QWebRTCDataChannel_impl(data_channel)));
-}
-
-void QWebRTCPeerConnection_impl::OnDataChannel(webrtc::DataChannelInterface* data_channel)
-{
-    // Don't do anything here. The scoped pointer function will be called with the same datachannel after
 }
 
 void QWebRTCPeerConnection_impl::OnRenegotiationNeeded() {

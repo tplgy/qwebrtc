@@ -43,11 +43,7 @@ public:
 
     virtual void OnRemoveStream(rtc::scoped_refptr<webrtc::MediaStreamInterface> stream) override;
 
-    virtual void OnRemoveStream(webrtc::MediaStreamInterface* stream) override;
-
     virtual void OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel) override;
-
-    virtual void OnDataChannel(webrtc::DataChannelInterface* data_channel) override;
 
     virtual void OnRenegotiationNeeded() override;
 

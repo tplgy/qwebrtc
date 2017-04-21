@@ -95,7 +95,7 @@ QSharedPointer<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createVideoTrack
     }
 
     cricket::WebRtcVideoDeviceCapturerFactory factory;
-    cricket::VideoCapturer* capturer = nullptr;
+    std::unique_ptr<cricket::VideoCapturer> capturer;
     for (const auto& name : device_names) {
         capturer = factory.Create(cricket::Device(name, 0));
         if (capturer) {
@@ -107,7 +107,7 @@ QSharedPointer<QWebRTCMediaTrack> QWebRTCPeerConnectionFactory::createVideoTrack
         return QSharedPointer<QWebRTCMediaTrack>();
     }
 
-    auto videoSource = m_impl->native_interface->CreateVideoSource(capturer);
+    auto videoSource = m_impl->native_interface->CreateVideoSource(std::move(capturer));
     auto videoTrack = m_impl->native_interface->CreateVideoTrack(label.toStdString(), videoSource);
     return QSharedPointer<QWebRTCMediaTrack>(new QWebRTCMediaTrack_impl(videoTrack, videoSource));
 }
