@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QSharedPointer>
 #include "qwebrtcsessiondescription.hpp"
 
 class QWebRTCPeerConnection_impl;

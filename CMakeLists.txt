@@ -113,43 +113,6 @@ add_library(${PROJECT_NAME} SHARED
     ${PRIVATE_HEADERS}
 )
 
-file(GLOB_RECURSE BORING_SSL_OBJ
-    "${WebRTCOutDir}/../third_party/boringssl/boringssl/*.o"
-    "${WebRTCOutDir}/../third_party/boringssl/boringssl_asm/*.o"
-)
-
-file(GLOB_RECURSE AUDIOCODIG_LIBS
-    "${WebRTCOutDir}/modules/audio_coding/*.a"
-)
-
-file(GLOB_RECURSE WEBRTC_OBJ
-    "${WebRTCOutDir}/../third_party/libvpx/*.o"
-    "${WebRTCOutDir}/../third_party/libjpeg_turbo/*.o"
-    "${WebRTCOutDir}/../third_party/openmax_dl/dl/dl/*.o"
-    "${WebRTCOutDir}/api/video_frame_api/i420_buffer.o"
-    "${WebRTCOutDir}/api/video_frame_api/video_frame.o"
-    "${WebRTCOutDir}/api/audio_codecs/audio_codecs_api/audio_decoder.o"
-    "${WebRTCOutDir}/common_audio/common_audio_c/*.o"
-    "${WebRTCOutDir}/api/audio_codecs/audio_codecs_api/audio_format.o"
-    "${WebRTCOutDir}/modules/media_file/media_file/media_file_impl.o"
-    "${WebRTCOutDir}/modules/media_file/media_file/media_file_utility.o"
-    "${WebRTCOutDir}/modules/audio_conference_mixer/audio_conference_mixer/*.o"
-    "${WebRTCOutDir}/modules/audio_coding/*.o"
-    "${WebRTCOutDir}/modules/audio_device/audio_device/*.o"
-    "${WebRTCOutDir}/modules/audio_device/mac_portaudio/*.o"
-    "${WebRTCOutDir}/modules/audio_processing/audio_processing_c/*.o"
-    "${WebRTCOutDir}/modules/remote_bitrate_estimator/remote_bitrate_estimator/*.o"
-    "${WebRTCOutDir}/modules/bitrate_controller/bitrate_controller/*.o"
-    "${WebRTCOutDir}/call/call_interfaces/audio_send_stream.o"
-    "${WebRTCOutDir}/call/call_interfaces/syncable.o"
-    "${WebRTCOutDir}/modules/congestion_controller/congestion_controller/*.o"
-    "${WebRTCOutDir}/audio/utility/audio_frame_operations/audio_frame_operations.o"
-    "${WebRTCOutDir}/voice_engine/level_indicator/level_indicator.o"
-    "${WebRTCOutDir}/logging/rtc_event_log_proto/rtc_event_log.pb.o"
-    "${WebRTCOutDir}/system_wrappers/metrics_default/metrics_default.o"
-    "${WebRTCOutDir}/../third_party/openh264/*.o"
-)
-
 target_link_libraries(${PROJECT_NAME}
     ${START_GROUP}
     "${WebRTCOutDir}/libwebrtc.a"
@@ -174,11 +137,8 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/../third_party/opus/libopus.a"
     "${WebRTCOutDir}/../third_party/protobuf/libprotobuf_full.a"
     "${WebRTCOutDir}/../third_party/ffmpeg/libffmpeg_yasm.a"
-    "${BORING_SSL_OBJ}"
-    "${WEBRTC_OBJ}"
     "${WebRTCOutDir}/p2p/librtc_p2p.a"
     "${WebRTCOutDir}/modules/rtp_rtcp/librtp_rtcp.a"
-    "${AUDIOCODIG_LIBS}"
     "${WebRTCOutDir}/modules/audio_processing/libaudio_processing.a"
     "${WebRTCOutDir}/modules/audio_processing/libaudio_processing_sse2.a"
     "${WebRTCOutDir}/modules/audio_processing/libaudioproc_debug_proto.a"
@@ -197,6 +157,7 @@ target_link_libraries(${PROJECT_NAME}
     "${WebRTCOutDir}/modules/desktop_capture/libdesktop_capture_differ_sse2.a"
     "${WebRTCOutDir}/system_wrappers/libsystem_wrappers.a"
     "${WebRTCOutDir}/system_wrappers/libfield_trial_default.a"
+    "${WebRTCOutDir}/system_wrappers/libmetrics_default.a"
     "${WebRTCOutDir}/voice_engine/libvoice_engine.a"
     "${WebRTCOutDir}/voice_engine/libfile_player.a"
     "${WebRTCOutDir}/voice_engine/libfile_recorder.a"
