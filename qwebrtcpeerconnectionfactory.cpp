@@ -5,7 +5,9 @@
 #include "qwebrtcpeerconnection.hpp"
 #include "qwebrtcmediatrack_p.hpp"
 #include "qwebrtcmediastream_p.hpp"
+#include "qwebrtcicecandidate.hpp"
 #include "qwebrtcconfiguration.hpp"
+#include "qwebrtcdatachannel.hpp"
 #include "qwebrtcdesktopvideosource_p.hpp"
 //#include <webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h>
 #include "webrtc/media/engine/webrtcvideocapturerfactory.h"
@@ -32,15 +34,15 @@ public:
 //    }
 //}
 
-//Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCIceCandidate>)
-//Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCMediaStream>)
-//Q_DECLARE_METATYPE(std::shared_ptr<QWebRTCDataChannel>)
+Q_DECLARE_METATYPE(QSharedPointer<QWebRTCIceCandidate>)
+Q_DECLARE_METATYPE(QSharedPointer<QWebRTCMediaStream>)
+Q_DECLARE_METATYPE(QSharedPointer<QWebRTCDataChannel>)
 
 QWebRTCPeerConnectionFactory::QWebRTCPeerConnectionFactory()
 {
-//    qRegisterMetaType<std::shared_ptr<QWebRTCIceCandidate> >();
-//    qRegisterMetaType<std::shared_ptr<QWebRTCMediaStream> >();
-//    qRegisterMetaType<std::shared_ptr<QWebRTCDataChannel> >();
+    qRegisterMetaType<QSharedPointer<QWebRTCIceCandidate> >();
+    qRegisterMetaType<QSharedPointer<QWebRTCMediaStream> >();
+    qRegisterMetaType<QSharedPointer<QWebRTCDataChannel> >();
     m_impl = QSharedPointer<QWebRTCPeerConnectionFactory_impl>(new QWebRTCPeerConnectionFactory_impl());
     m_impl->m_networkingThread = rtc::Thread::CreateWithSocketServer();
     if (!m_impl->m_networkingThread->Start()) {
